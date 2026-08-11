@@ -1,0 +1,240 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>东方角色提示词生成器</title>
+  <style>
+    :root{--ink:#17201e;--muted:#697572;--paper:#f6f3eb;--panel:rgba(255,255,255,.84);--line:#d9d4c8;--jade:#1f6d61;--jade2:#134d46;--gold:#b58a48;--red:#8b3d37;--shadow:0 18px 55px rgba(39,51,46,.11);--radius:18px}
+    *{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;color:var(--ink);font-family:"Microsoft YaHei","PingFang SC","Noto Sans SC",system-ui,sans-serif;background:radial-gradient(circle at 10% 4%,rgba(181,138,72,.14),transparent 24rem),radial-gradient(circle at 88% 12%,rgba(31,109,97,.12),transparent 30rem),var(--paper);min-height:100vh}
+    body:before{content:"";position:fixed;inset:0;pointer-events:none;opacity:.28;background-image:linear-gradient(rgba(31,109,97,.025) 1px,transparent 1px),linear-gradient(90deg,rgba(31,109,97,.025) 1px,transparent 1px);background-size:32px 32px}
+    button,input,select,textarea{font:inherit}.app{max-width:1600px;margin:auto;padding:24px;position:relative}.masthead{display:flex;align-items:center;justify-content:space-between;gap:20px;margin-bottom:18px}.brand{display:flex;align-items:center;gap:14px}.seal{width:48px;height:48px;border:1px solid rgba(139,61,55,.55);color:var(--red);display:grid;place-items:center;border-radius:13px;font-family:serif;font-size:20px;font-weight:700;transform:rotate(-2deg);background:rgba(255,255,255,.55);box-shadow:inset 0 0 0 4px rgba(139,61,55,.05)}h1{font-size:clamp(22px,3vw,32px);font-weight:750;letter-spacing:.08em;margin:0}.subtitle{color:var(--muted);margin:5px 0 0;font-size:13px}.toolbar{display:flex;flex-wrap:wrap;gap:8px;justify-content:flex-end}.btn{border:1px solid var(--line);background:rgba(255,255,255,.82);color:var(--ink);padding:9px 13px;border-radius:10px;cursor:pointer;transition:.18s;display:inline-flex;align-items:center;gap:7px;white-space:nowrap}.btn:hover{transform:translateY(-1px);border-color:#aebcb8;box-shadow:0 6px 15px rgba(37,58,52,.08)}.btn.primary{background:var(--jade);border-color:var(--jade);color:white}.btn.danger{color:var(--red)}.btn.small{padding:7px 10px;font-size:13px}.grid{display:grid;grid-template-columns:210px minmax(440px,1fr) minmax(340px,460px);gap:16px;align-items:start}.card{background:var(--panel);border:1px solid rgba(210,205,193,.9);border-radius:var(--radius);box-shadow:var(--shadow);backdrop-filter:blur(14px)}.sidebar{padding:12px;position:sticky;top:16px}.tabs{display:flex;flex-direction:column;gap:7px}.tab{appearance:none;border:0;background:transparent;padding:13px 14px;border-radius:12px;text-align:left;cursor:pointer;color:#46514e;font-weight:650;letter-spacing:.02em;display:flex;align-items:center;gap:10px}.tab .num{font-family:Georgia,serif;color:var(--gold);font-size:13px;width:22px}.tab:hover{background:rgba(31,109,97,.06)}.tab.active{background:linear-gradient(135deg,var(--jade),var(--jade2));color:white;box-shadow:0 8px 20px rgba(31,109,97,.22)}.tab.active .num{color:#eed8ae}.nav-note{border-top:1px solid var(--line);margin:12px 4px 0;padding:13px 6px 3px;color:var(--muted);font-size:12px;line-height:1.65}.editor{padding:20px;min-height:720px}.basic{padding:18px;margin-bottom:16px}.section-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:16px}.section-head h2{margin:0;font-size:19px}.section-head p{margin:5px 0 0;color:var(--muted);font-size:13px}.count{font-size:12px;color:var(--jade);background:rgba(31,109,97,.08);padding:6px 9px;border-radius:99px}.basic-grid{display:grid;grid-template-columns:repeat(5,minmax(115px,1fr));gap:10px}.control label,.basic-label{display:block;font-size:12px;color:var(--muted);margin:0 0 6px}.input,select,textarea{width:100%;border:1px solid var(--line);background:rgba(255,255,255,.92);border-radius:10px;color:var(--ink);outline:none;transition:.15s}.input,select{height:40px;padding:0 11px}textarea{padding:11px;line-height:1.65;resize:vertical}input:focus,select:focus,textarea:focus{border-color:rgba(31,109,97,.65);box-shadow:0 0 0 3px rgba(31,109,97,.1)}.group-title{display:flex;align-items:center;gap:10px;margin:22px 0 10px;color:#394440;font-size:14px;font-weight:750}.group-title:after{content:"";height:1px;background:linear-gradient(90deg,var(--line),transparent);flex:1}.fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.field{border:1px solid var(--line);background:rgba(250,249,245,.72);border-radius:13px;padding:12px;transition:.15s}.field:hover{border-color:#bdc9c5}.field.disabled{opacity:.5}.field-top{display:flex;align-items:center;gap:8px;margin-bottom:9px}.enable{appearance:none;width:18px;height:18px;min-width:18px;border:1.5px solid #aeb7b4;border-radius:5px;background:white;display:grid;place-items:center;cursor:pointer}.enable:checked{background:var(--jade);border-color:var(--jade)}.enable:checked:after{content:"✓";font-size:12px;color:white;font-weight:bold}.field-name{font-size:13px;font-weight:700}.custom{margin-top:8px;height:36px!important;font-size:13px}.chips{display:flex;flex-wrap:wrap;gap:6px;max-height:106px;overflow:auto;padding:1px}.chip input{position:absolute;opacity:0;pointer-events:none}.chip span{display:block;padding:6px 9px;border:1px solid var(--line);border-radius:8px;background:white;font-size:12px;cursor:pointer;transition:.14s}.chip input:checked+span{background:rgba(31,109,97,.11);color:var(--jade2);border-color:rgba(31,109,97,.48);font-weight:650}.preview{position:sticky;top:16px;padding:18px;max-height:calc(100vh - 32px);overflow:auto}.preview h2{margin:0;font-size:18px}.preview-text{min-height:300px;margin-top:13px;font-family:"Microsoft YaHei",sans-serif;font-size:14px;background:#fbfaf6}.preview-actions{display:grid;grid-template-columns:1fr auto;gap:8px;margin-top:10px}.lockbox{margin-top:16px;border-top:1px solid var(--line);padding-top:15px}.switch-line{display:flex;align-items:center;justify-content:space-between;gap:10px}.switch{position:relative;width:43px;height:24px;flex:none}.switch input{opacity:0;width:0;height:0}.slider{position:absolute;inset:0;background:#b8bfbc;border-radius:99px;cursor:pointer;transition:.2s}.slider:before{content:"";position:absolute;width:18px;height:18px;left:3px;top:3px;background:white;border-radius:50%;transition:.2s;box-shadow:0 2px 5px rgba(0,0,0,.2)}.switch input:checked+.slider{background:var(--jade)}.switch input:checked+.slider:before{transform:translateX(19px)}.lock-title{font-size:14px;font-weight:750}.lock-desc{font-size:12px;color:var(--muted);margin:4px 0 10px;line-height:1.55}.negative{height:112px;font-size:12px}.meta{display:flex;justify-content:space-between;color:var(--muted);font-size:11px;margin-top:8px}.toast{position:fixed;left:50%;bottom:28px;transform:translate(-50%,18px);background:#172b27;color:white;border-radius:10px;padding:10px 16px;opacity:0;pointer-events:none;transition:.25s;z-index:50;box-shadow:0 12px 35px rgba(0,0,0,.2)}.toast.show{opacity:1;transform:translate(-50%,0)}.empty{padding:40px;text-align:center;color:var(--muted)}.kbd{border:1px solid #ccc7ba;border-bottom-width:2px;padding:1px 5px;border-radius:5px;background:#fff;font-size:10px}.mobile-preview{display:none}.footer{text-align:center;color:#8b938f;font-size:11px;padding:18px}.hidden{display:none!important}
+    @media(max-width:1180px){.grid{grid-template-columns:190px 1fr}.preview{grid-column:1/-1;position:relative;top:auto;max-height:none}.basic-grid{grid-template-columns:repeat(3,1fr)}}
+    @media(max-width:760px){.app{padding:12px}.masthead{align-items:flex-start;flex-direction:column}.toolbar{justify-content:flex-start}.grid{display:block}.sidebar{position:relative;top:auto;margin-bottom:12px;padding:8px;overflow:auto}.tabs{flex-direction:row;min-width:max-content}.tab{padding:10px 12px}.nav-note{display:none}.editor{padding:13px;min-height:0}.basic{padding:13px}.basic-grid,.fields{grid-template-columns:1fr}.preview{margin-top:12px;padding:14px}.field{padding:11px}.subtitle{line-height:1.55}.hide-mobile{display:none}}
+  </style>
+</head>
+<body>
+<div class="app">
+  <header class="masthead">
+    <div class="brand"><div class="seal">造相</div><div><h1>东方角色提示词生成器</h1><p class="subtitle">为仙侠 · 武侠 · 修仙角色精确锁定面貌、服饰与器物｜数据仅保存在本地</p></div></div>
+    <div class="toolbar">
+      <button class="btn" id="randomBtn">✦ 随机角色</button>
+      <button class="btn" id="saveBtn">保存配置</button>
+      <button class="btn" id="loadBtn">读取配置</button>
+      <button class="btn" id="exportBtn">导出 JSON</button>
+      <button class="btn" id="importBtn">导入 JSON</button>
+      <button class="btn danger" id="clearBtn">清空</button>
+      <input type="file" id="fileInput" accept="application/json,.json" hidden>
+    </div>
+  </header>
+
+  <section class="card basic">
+    <div class="section-head"><div><h2>角色基础信息</h2><p>先定角色身份与第一印象，未填写的项目不会写入提示词。</p></div><span class="count">基础设定</span></div>
+    <div class="basic-grid">
+      <div><label class="basic-label" for="characterName">角色名称</label><input class="input basic-input" id="characterName" data-key="name" placeholder="如：沈照月"></div>
+      <div><label class="basic-label" for="gender">性别呈现</label><select class="basic-input" id="gender" data-key="gender"><option value="">不限定</option><option>女性</option><option>男性</option><option>中性</option><option>少年</option><option>少女</option><option>非二元呈现</option></select></div>
+      <div><label class="basic-label" for="age">年龄段</label><select class="basic-input" id="age" data-key="age"><option value="">不限定</option><option>孩童（7—12岁）</option><option>少年感（13—17岁）</option><option selected>青年（18—28岁）</option><option>成熟青年（29—39岁）</option><option>中年（40—55岁）</option><option>老年（56岁以上）</option><option>外表年轻、实际高龄</option></select></div>
+      <div><label class="basic-label" for="roleType">角色类型</label><input class="input basic-input" id="roleType" data-key="roleType" list="roleTypes" placeholder="选择或输入"><datalist id="roleTypes"><option>清冷剑修</option><option>仙门弟子</option><option>江湖侠客</option><option>魔教少主</option><option>隐世医者</option><option>世家公子</option><option>妖族祭司</option><option>山野灵修</option><option>帝王将相</option><option>游侠刺客</option></datalist></div>
+      <div><label class="basic-label" for="temperament">核心气质</label><input class="input basic-input" id="temperament" data-key="temperament" list="temperaments" placeholder="如：清冷疏离"><datalist id="temperaments"><option>清冷疏离</option><option>温润克制</option><option>明艳凌厉</option><option>英气飒爽</option><option>沉静悲悯</option><option>邪魅危险</option><option>少年意气</option><option>仙风道骨</option><option>慵懒不羁</option><option>孤傲威严</option></datalist></div>
+    </div>
+  </section>
+
+  <div class="grid">
+    <aside class="card sidebar"><nav class="tabs" id="tabs"></nav><div class="nav-note">每项左侧勾选框决定是否写入结果。多选项可组合；任何项目都能补充自定义内容。</div></aside>
+    <main class="card editor"><div id="moduleHeader"></div><div id="fieldsRoot"></div></main>
+    <aside class="card preview">
+      <div class="section-head"><div><h2>完整角色提示词</h2><p>会随每次选择自动更新</p></div><span class="count" id="charCount">0 字</span></div>
+      <textarea id="promptOutput" class="preview-text" spellcheck="false" aria-label="完整角色提示词"></textarea>
+      <div class="preview-actions"><button class="btn primary" id="copyBtn">复制完整提示词</button><button class="btn small" id="refreshBtn" title="按当前选项重新生成">↻</button></div>
+      <div class="lockbox">
+        <div class="switch-line"><div class="lock-title">一致性锁定</div><label class="switch"><input id="consistencyToggle" type="checkbox" checked><span class="slider"></span></label></div>
+        <p class="lock-desc">适合连续出图、三视图和视频。固定同一身份、面部比例及角色标志性元素。</p>
+        <textarea id="consistencyText" rows="4">同一角色、同一身份、同一张脸（same character, same identity, same face），严格固定脸型与五官比例、眼型和瞳色、发型与发色、服装结构与配色、配饰位置及武器造型；跨镜头保持年龄、骨相、身形和标志性细节完全一致，不随机改变设计。</textarea>
+      </div>
+      <div class="lockbox">
+        <div class="switch-line"><div class="lock-title">负面约束</div><label class="switch"><input id="negativeToggle" type="checkbox" checked><span class="slider"></span></label></div>
+        <p class="lock-desc">可直接编辑，随完整提示词一并复制。</p>
+        <textarea id="negativeText" class="negative">避免千篇一律网红脸、过度欧美化五官、夸张高鼻深目、过度磨皮、塑料皮肤、五官漂移、左右眼不对称、发型错乱、服装结构随机变化、配饰缺失、武器变形；避免畸形手、缺指、多指、融合手指、扭曲肢体、错误透视、重复物体、低清晰度、水印、文字、标志。</textarea>
+      </div>
+      <div class="meta"><span>本地离线运行</span><span><span class="kbd">Ctrl</span> + <span class="kbd">Enter</span> 复制</span></div>
+    </aside>
+  </div>
+  <div class="footer">所有选项与配置均留在你的浏览器中，不会上传。</div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+(() => {
+  'use strict';
+  const F=(id,label,options,type='select',group='细节',def='',enabled=false)=>({id,label,options,type,group,def,enabled});
+  const modules={
+    face:{title:'脸型 / 面部',desc:'从整体骨相到局部五官，精确建立可复现的东方角色面貌。',groups:[
+      ['整体轮廓',[F('faceShape','脸型',['标准鹅蛋脸','偏窄鹅蛋脸','修长鹅蛋脸','柔和椭圆脸','标准瓜子脸','略有棱角的瓜子脸','心形脸','小巧圆脸','幼态短圆脸','方圆脸','柔和方脸','清瘦长脸','窄长东方脸','标准菱形脸','高颧骨菱形脸','倒三角脸','梨形脸','英气骨感脸'],'select','', '偏窄鹅蛋脸',true),F('faceRatio','脸宽长比例',['短而偏宽','短而偏窄','标准均衡','中等偏窄','中等偏长','窄长修长','宽长硬朗'],'select','', '中等偏窄',true),F('forehead','额头',['窄而低平','中等自然','宽而平缓','偏高饱满','饱满圆润','清瘦骨感','略微突出'],'select'),F('hairline','发际线',['自然圆弧形','平缓弧形','轻微M形','明显M形','轻微美人尖','清晰美人尖','方形发际线','偏低','偏高','两侧自然后退'],'select')]],
+      ['下颌与面中',[F('jawline','下颌线',['纤细柔和','圆润流畅','柔和收窄','自然清晰','清晰利落','紧致流畅','窄而锐利','略带棱角','明显骨感','下颌角轻微明显','下颌角明显','硬朗英气'],'select','', '清晰利落',true),F('jawWidth','下颌宽度',['极窄','偏窄','中等偏窄','标准','中等偏宽','宽阔'],'select'),F('chin','下巴',['小巧圆润','短而圆润','柔和圆下巴','自然微尖','小巧微尖','纤细尖下巴','窄长下巴','方形下巴','宽而平缓','微微前翘','略微后收','中央轻微凹陷'],'select','', '自然微尖',true),F('cheekboneHeight','颧骨高度',['低平','偏低','中等高度','略高','高','明显高颧骨'],'select'),F('cheekboneForm','颧骨形态',['平缓柔和','圆润自然','轻微突出','清晰但不突出','略微外扩','明显外扩','窄而高','宽而平','骨感突出','东方自然平缓型'],'select'),F('cheeks','脸颊',['清瘦','略微凹陷','自然平整','柔和饱满','轻微婴儿肥','明显幼态饱满','苹果肌轻微饱满','苹果肌明显','骨感脸颊'],'select')]],
+      ['眉部',[F('browShape','眉型',['自然平眉','纤细平眉','柔和平眉','平直剑眉','英气剑眉','细长剑眉','自然弯眉','柔和弯月眉','柳叶眉','新月眉','远山眉','清晰眉峰眉','微挑眉','上扬眉','野生自然眉','古典东方长眉'],'select','', '古典东方长眉',true),F('browThickness','眉毛粗细',['极细','纤细','中等偏细','自然中等','中等偏粗','粗而英气'],'select'),F('browDensity','眉毛浓密度',['稀疏轻淡','疏密自然','中等浓密','浓密根根分明','野生浓密'],'select'),F('browEyeDistance','眉眼距离',['较近、显得凌厉','中等自然','略宽、显得舒展','较宽、显得温和'],'select')]],
+      ['眼部形态',[F('eyeShape','眼型',['自然杏仁眼','偏圆杏仁眼','狭长杏仁眼','大杏仁眼','狭长丹凤眼','柔和丹凤眼','上扬丹凤眼','古典瑞凤眼','柳叶眼','狭长狐狸眼','微上挑狐狸眼','含情桃花眼','圆润荔枝眼','清澈鹿眼','幼态小鹿眼','细长眼','微下垂狗狗眼','猫系上挑眼'],'select','', '狭长丹凤眼',true),F('eyeSize','眼睛大小',['小巧克制','中等偏小','自然中等','中等偏大','大而有神','圆大幼态'],'select'),F('eyeLength','眼裂长度',['短眼裂','中等偏短','自然中等','中等偏长','狭长眼裂','极细长眼裂'],'select'),F('eyeTail','眼尾',['自然平直','轻微上扬','明显上挑','锐利上挑','轻微下垂','柔和下垂','眼尾细长延伸'],'select'),F('eyeInner','眼头',['圆钝内眼角','自然内眼角','尖细内眼角','内眦轻覆','开阔清晰内眼角'],'select'),F('eyelid','双眼皮',['单眼皮','内双','窄扇形双眼皮','自然扇形双眼皮','平行双眼皮','浅而不明显双眼皮','深而清晰双眼皮'],'select'),F('aegyo','卧蚕',['无明显卧蚕','轻微自然','细窄卧蚕','柔和清晰','明显饱满'],'select'),F('eyeDistance','眼距',['偏近','中等偏近','标准眼距','中等偏宽','宽眼距'],'select'),F('lashes','睫毛',['短而自然','纤细自然','根根分明','浓密卷翘','眼尾略长','上睫毛浓密、下睫毛稀疏'],'select')]],
+      ['瞳孔与神态',[F('irisColor','虹膜颜色',['纯黑色','墨黑色','深棕色','茶褐色','琥珀色','浅金棕色','冷灰色','青灰色','墨绿色','暗红色','淡金色','异色瞳'],'select','', '深棕色',true),F('irisSize','虹膜大小',['偏小、露白略多','中等自然','中等偏大','大而清澈','虹膜占比很大'],'select'),F('gaze','眼神',['清冷疏离','沉静克制','清澈无辜','温柔含情','警觉锐利','坚毅沉着','慵懒倦怠','悲悯安静','邪气危险','空灵出尘','少年意气','久经世事'],'select','', '清冷疏离',true)]],
+      ['鼻部',[F('noseRoot','山根',['低而自然','自然偏低','中等自然','自然立体','略高而窄','高而清晰','柔和过渡'],'select'),F('noseBridge','鼻梁',['低而平缓','自然平直','纤细平直','细窄鼻梁','微挺流畅','中等挺拔','高而纤细','高挺笔直','轻微驼峰','微弧形','鼻根偏低、逐渐抬高'],'select','', '纤细平直',true),F('noseWidth','鼻部宽度',['窄小精致','中等偏窄','自然中等','略宽柔和','宽而英气'],'select'),F('noseTip','鼻尖',['小巧圆润','精致圆润','纤细微尖','小巧微翘','自然微垂','短圆鼻尖','精致窄鼻尖','略有肉感','柔和钝圆'],'select'),F('noseWing','鼻翼',['窄小内收','小巧自然','自然宽度','略窄','略宽','圆润饱满','薄而清晰'],'select'),F('nostril','鼻孔',['几乎不可见','轻微可见','自然椭圆','小巧圆形','略微外露'],'select')]],
+      ['唇部',[F('mouthSize','嘴巴大小',['小巧窄口','中等偏小','自然中等','中等偏宽','宽而舒展'],'select'),F('lipThickness','唇厚',['上下均匀薄唇','自然薄唇','中等厚度','柔和饱满','饱满厚唇','上薄下厚','上唇略薄、下唇丰满'],'select','', '上唇略薄、下唇丰满',true),F('lipShape','唇型',['小巧樱桃唇','花瓣唇','M形唇','古典菱角唇','圆润唇','宽而薄的唇','窄而精致的唇','微翘唇','下唇中央饱满'],'select'),F('cupidBow','唇峰',['无明显唇峰','唇峰柔和','唇峰轻微明显','唇峰清晰锐利','对称M形唇峰'],'select'),F('lipRatio','上下唇比例',['上下一致','上唇略薄、下唇略厚','上唇明显薄于下唇','上唇略厚、下唇稍薄'],'select'),F('mouthCorner','嘴角',['自然平直','轻微上扬','明显上扬','轻微下垂','一侧微挑','柔和放松'],'select'),F('lipColor','唇色',['自然肉粉色','淡裸粉色','浅玫瑰色','柔和豆沙色','偏冷淡粉','暖珊瑚粉','低饱和淡红','红棕色','苍白失血感','朱红色'],'select','', '自然浅玫瑰色',true)]],
+      ['肤质与辨识度',[F('skinTone','肤色',['冷调瓷白','暖调象牙白','自然白皙','黄调白皙','中性自然肤色','健康浅麦色','暖棕色','冷调苍白','日晒小麦色'],'select','', '冷调瓷白',true),F('skinTexture','皮肤质感',['真实细腻、保留毛孔','柔润通透','清透微光泽','自然哑光','轻微风霜感','细腻但不磨皮','粗粝真实','带轻微伤痕纹理'],'select','', '真实细腻、保留毛孔',true),F('marks','痣 / 雀斑 / 疤痕',['无明显标记','眼下泪痣','眉尾小痣','鼻尖小痣','唇下小痣','浅淡鼻梁雀斑','两颊自然雀斑','眉骨细疤','眼尾细疤','横贯面颊旧疤','唇角细小旧伤'],'multi'),F('ageFeeling','年龄感',['明显幼态','少年感','青年感','成熟克制','历经世事','超越年龄的沉静','外表年轻却有古老感'],'select'),F('overallAura','整体气质',['清冷出尘','温润如玉','英气飒爽','明艳凌厉','古典端庄','仙气空灵','邪魅妖异','孤傲疏离','沉静悲悯','野性不羁','冷峻危险','柔弱病气'],'multi','', ['清冷出尘'],true)]],
+    ]},
+    hair:{title:'发型',desc:'定义轮廓、动态与发饰结构，避免角色在不同镜头中随机换发型。',groups:[
+      ['基础形态',[F('hairLength','发长',['极短寸发','耳上短发','齐耳短发','下颌短发','齐肩发','锁骨发','及胸长发','及腰长发','过腰长发','垂至脚踝的超长发'],'select','', '及腰长发',true),F('hairColor','发色',['纯黑','乌黑泛青','墨黑','深棕','茶褐','银白','雪白','月光灰','灰蓝','墨青','暗红','栗色','金棕','黑发夹银丝','渐变发色'],'select','', '乌黑泛青',true),F('hairTexture','发质',['柔顺直发','细软直发','粗硬直发','自然微卷','松散大卷','轻盈蓬松','顺滑如缎','略显干燥粗粝','湿润贴合'],'select'),F('bangs','刘海',['无刘海、露出额头','中分帘式刘海','偏分长刘海','轻薄碎刘海','齐眉刘海','斜刘海','龙须刘海','额前两缕长发','不对称长刘海'],'select')]],
+      ['束发结构',[F('tieStyle','束发方式',['全部披散','半披半束','高马尾','低马尾','侧马尾','高束发','低束发','冠束发','发带束发','多段束发','随意挽发'],'select','', '半披半束',true),F('bun','发髻',['无发髻','高发髻','低发髻','道髻','盘云髻','灵蛇髻','丸髻','双环髻','简洁单髻','松散侧髻'],'select'),F('braid','辫发',['无辫发','单根细辫','多根装饰细辫','粗长单辫','双辫','鱼骨辫','发冠两侧细辫','鬓边小辫','编发环绕发髻'],'multi'),F('templeHair','鬓角',['干净收束','短鬓角','自然鬓发','细长鬓发','两侧龙须鬓发','略显凌乱的鬓角'],'select')]],
+      ['动态细节',[F('looseHair','碎发',['无明显碎发','额前少量碎发','鬓边细碎发','颈后碎发','大量自然碎发','不对称垂落发丝'],'multi'),F('strandState','发丝状态',['整齐贴服','柔顺分束','根根清晰','自然蓬松','略微凌乱','湿发成束','飘散如墨','发尾轻卷'],'select'),F('wind','风感',['无风、自然垂落','微风轻拂','侧风吹动发尾','迎面风掀起碎发','强风向后飘扬','失重悬浮感'],'select'),F('hairOrnaments','头发饰物',['无饰物','素色发带','丝质长发带','红色束发绳','金属发扣','玉珠点缀','细金链','羽毛饰物','小铃铛','花枝点缀'],'multi')]]
+    ]},
+    clothing:{title:'服装',desc:'按时代、结构、材质与使用痕迹组织完整服装设计。',groups:[
+      ['风格与结构',[F('clothingStyle','风格 / 时代',['古典仙侠','传统武侠','修仙宗门','先秦古风','汉制风格','唐风华服','宋制雅服','明制劲装','架空东方幻想','暗黑东方奇幻','游牧边塞','江湖市井','宫廷贵族','山野隐士'],'select','', '古典仙侠',true),F('innerLayer','内搭',['交领素色内衫','立领窄袖内衫','圆领薄衫','抹胸式内搭','贴身黑色劲装','轻薄纱质内搭','粗麻短褐','暗纹中衣'],'select'),F('outerRobe','外袍',['无外袍','广袖长袍','窄袖长袍','对襟外袍','交领外袍','无袖罩袍','鹤氅','短款战袍','不对称披挂外袍','轻纱罩衣'],'select','', '交领外袍',true),F('top','上装',['交领长衫','对襟衫','圆领袍','窄袖劲装','短打上衣','护甲上衣','斜襟长衫','无袖束身衣'],'select'),F('bottom','下装',['曳地长裙','百褶长裙','层叠纱裙','宽腿长裤','束脚裤','袍摆遮挡下装','甲片战裙','不对称裙裤'],'select')]],
+      ['剪裁细节',[F('sleeves','袖型',['窄袖','直袖','广袖','垂坠大袖','箭袖','马蹄袖','半袖叠搭','无袖','袖口收紧','破损残袖'],'select'),F('collar','领型',['交领右衽','对襟直领','圆领','立领','低交领','高领护颈','斜襟领','翻领','无明显领口'],'select'),F('waist','腰封',['无腰封','窄布腰带','宽幅腰封','皮质束腰','金属扣腰带','多层交叠腰封','绳结束腰','玉带'],'select','', '宽幅腰封',true),F('layers','服装层次',['极简单层','内外两层','三层清晰叠穿','多层轻纱叠穿','袍甲混搭','长短不对称叠层','披挂式丰富层次'],'select')]],
+      ['材质与色彩',[F('fabric','主要材质',['棉麻','粗麻','丝绸','暗纹锦缎','轻薄雪纺','半透明薄纱','缂丝','皮革','做旧麂皮','金属甲片','竹纤维质感','丝麻混纺'],'multi','', ['丝绸','半透明薄纱'],true),F('clothingColors','服装颜色',['月白','象牙白','霜灰','玄黑','墨青','黛蓝','苍青','松石绿','竹青','朱红','暗绛红','鎏金','赭石','烟紫','藕荷','银灰'],'multi','', ['月白','墨青'],true),F('patterns','纹样',['无纹纯色','暗云纹','水波纹','竹叶纹','鹤纹','莲纹','山峦纹','星宿纹','雷纹','龙纹','凤鸟纹','宗门徽纹','金线几何纹','墨迹晕染纹'],'multi'),F('aging','做旧程度',['全新洁净','轻微使用痕迹','自然旧化','明显风尘感','严重陈旧褪色'],'select'),F('damage','破损程度',['无破损','边缘轻微磨损','袖口起毛','袍摆小面积撕裂','多处战损划口','严重残破但结构可辨'],'select')]],
+      ['完整搭配',[F('boots','鞋靴',['素色布鞋','轻便短靴','黑色长靴','云头履','皮革战靴','软底快靴','金属护胫战靴','草鞋','赤足'],'select'),F('cape','披风',['无披风','短披肩','及膝披风','曳地长披风','兜帽披风','毛领斗篷','轻纱披帛','单肩披风','破损战斗披风'],'select'),F('silhouette','整体廓形',['修长垂坠','轻盈飘逸','上窄下宽','利落贴身','宽袍大袖','层叠繁复','硬朗战斗感','朴素松弛'],'select')]]
+    ]},
+    accessories:{title:'配饰',desc:'加入能强化身份和辨识度的装饰；不需要时可关闭对应项目。',groups:[
+      ['头面配饰',[F('headpiece','头饰',['无头饰','玉质小冠','金属发冠','莲花冠','道冠','凤冠','兽骨冠','额链','抹额','额间花钿','丝带额饰'],'multi'),F('pin','发冠 / 簪',['无发簪','白玉簪','青玉簪','乌木簪','银簪','金簪','剑形簪','竹节簪','莲花簪','步摇','极简金属冠'],'multi'),F('earrings','耳饰',['无耳饰','单侧耳坠','小巧耳钉','长流苏耳坠','玉环耳饰','银链耳坠','红玉耳坠','羽毛耳饰','不对称耳饰'],'multi'),F('mask','面具',['无面具','半面银质面具','黑色半脸面具','白色无相面具','鬼面具','狐面具','木质面具','面纱遮面','薄纱帷帽'],'select'),F('hat','斗笠 / 帽饰',['无斗笠','竹编斗笠','黑纱斗笠','带帷纱斗笠','宽檐笠帽','兜帽','皮毛边塞帽'],'select')]],
+      ['身体配饰',[F('necklace','项饰',['无项饰','细银链','玉石吊坠','护身符项链','黑绳坠饰','金属项圈','多层珠链','兽牙项链'],'multi'),F('bracers','护腕',['无护腕','布质绑腕','皮革护腕','银色金属护腕','雕纹臂甲','黑色护臂','玉质护腕'],'multi'),F('waistAccessories','腰饰',['无额外腰饰','垂落腰链','金属腰扣','流苏腰坠','符箓挂带','小药瓶组','绳结挂饰','令牌'],'multi'),F('jade','玉佩',['无玉佩','白玉圆佩','青玉环佩','云纹玉佩','龙纹玉佩','双鱼玉佩','残缺古玉','多层组玉佩'],'select'),F('sachet','香囊',['无香囊','素布香囊','绣花香囊','红色流苏香囊','旧药囊','皮革香袋'],'select')]],
+      ['携带物',[F('bag','包 / 挂件',['无包袋','小型布包','皮质腰包','药囊','卷轴袋','竹筒','葫芦','酒壶','铃铛挂件','护符串','经卷匣'],'multi'),F('signatureAccessory','标志性配饰',['红色长发带','缺角玉佩','单侧银耳坠','旧铜铃','宗门令牌','缠腕红绳','黑色护额','白玉莲花簪','染血香囊'],'multi')]]
+    ]},
+    weapon:{title:'武器',desc:'支持无武器；启用具体细节后可锁定武器外观和佩戴方式。',groups:[
+      ['武器主体',[F('weaponClass','武器大类',['无武器','剑类','刀类','枪矛类','弓弩类','棍杖类','扇类','暗器','鞭索类','法器','乐器武器','双持武器','奇门兵器'],'select','', '剑类',true),F('weaponType','具体类型',['长剑','三尺青锋','重剑','软剑','双剑','苗刀','横刀','环首刀','陌刀','短刀','匕首','长枪','红缨枪','长矛','反曲弓','长弓','弩','折扇','铁骨扇','拂尘','法杖','禅杖','玉笛','古琴','飞针','飞刀','锁链鞭','九节鞭','轮刃'],'select','', '三尺青锋',true),F('weaponSize','尺寸',['袖珍隐蔽','短小轻便','标准尺寸','修长轻盈','宽大厚重','超长夸张','与角色身高相近'],'select'),F('weaponMaterial','材质',['精钢','乌金','玄铁','百炼钢','青铜','白银','寒玉','黑曜石','灵木','竹制','骨质','半透明灵晶'],'multi'),F('weaponColor','颜色',['银白','冷灰','乌黑','墨青','青铜绿','暗金','霜蓝','血红','象牙白','木本色'],'multi')]],
+      ['装饰与结构',[F('weaponPattern','武器纹样',['无纹素面','云雷纹','水波纹','龙纹','凤鸟纹','莲花纹','山河纹','星宿纹','符文铭刻','裂纹状灵脉','宗门徽记'],'multi'),F('guard','护手 / 剑格',['无护手','一字剑格','云纹剑格','莲花剑格','兽首护手','圆形刀镡','十字护手','环形护手','极简窄剑格'],'select'),F('grip','握柄',['黑色缠绳','白色缠绳','红色缠绳','皮革包柄','乌木握柄','白玉握柄','金属鳞纹握柄','磨损旧布缠柄'],'select'),F('sheath','剑鞘 / 刀鞘',['无鞘','黑漆木鞘','白色皮鞘','乌木鞘','雕花银鞘','暗纹皮鞘','残旧木鞘','镶玉剑鞘','布条缠绕刀鞘'],'select')]],
+      ['使用状态',[F('carryPosition','佩戴位置',['腰侧横佩','腰后斜佩','背后斜背','背后竖背','手持下垂','双手执握','藏于袖中','悬于身侧','置于琴匣 / 武器匣中'],'select','', '腰侧横佩',true),F('weaponWear','磨损状态',['全新无痕','保养良好、轻微划痕','自然使用磨损','刃口细小缺口','明显战斗划痕','锈迹斑驳','残破古旧'],'select'),F('effects','特殊效果',['无特殊效果','刃口微泛寒光','淡青色灵气流动','金色符文微光','幽蓝剑气','红色煞气','雷电缠绕','冰霜凝结','火焰附着','黑雾缭绕','花瓣环绕','水流般灵力','空间轻微扭曲'],'multi')]]
+    ]}
+  };
+  const order=['face','hair','clothing','accessories','weapon'];
+  const icons={face:'01',hair:'02',clothing:'03',accessories:'04',weapon:'05'};
+  const state={active:'face',values:{},enabled:{},custom:{}};
+  const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+
+  function allFields(){return order.flatMap(k=>modules[k].groups.flatMap(g=>g[1].map(f=>({...f,module:k}))));}
+  function initializeState(){allFields().forEach(f=>{state.enabled[f.id]=!!f.enabled;state.values[f.id]=Array.isArray(f.def)?[...f.def]:(f.def||'');state.custom[f.id]='';});}
+  function renderTabs(){
+    $('#tabs').innerHTML=order.map(k=>`<button class="tab ${state.active===k?'active':''}" data-tab="${k}"><span class="num">${icons[k]}</span>${modules[k].title}</button>`).join('');
+    $$('#tabs .tab').forEach(b=>b.onclick=()=>{state.active=b.dataset.tab;renderTabs();renderModule();});
+  }
+  function esc(s){return String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));}
+  function fieldHTML(f){
+    const val=state.values[f.id];
+    let control='';
+    if(f.type==='multi'){
+      const arr=Array.isArray(val)?val:[];
+      control=`<div class="chips">${f.options.map((o,i)=>`<label class="chip"><input type="checkbox" data-option="${esc(o)}" ${arr.includes(o)?'checked':''}><span>${esc(o)}</span></label>`).join('')}</div>`;
+    }else{
+      control=`<select class="field-select"><option value="">请选择…</option>${f.options.map(o=>`<option ${val===o?'selected':''}>${esc(o)}</option>`).join('')}</select>`;
+    }
+    return `<div class="field ${state.enabled[f.id]?'':'disabled'}" data-id="${f.id}"><div class="field-top"><input class="enable" type="checkbox" ${state.enabled[f.id]?'checked':''}><span class="field-name">${f.label}</span></div>${control}<input class="input custom" value="${esc(state.custom[f.id])}" placeholder="自定义补充（可留空）"></div>`;
+  }
+  function renderModule(){
+    const m=modules[state.active];
+    const n=m.groups.reduce((a,g)=>a+g[1].length,0);
+    $('#moduleHeader').innerHTML=`<div class="section-head"><div><h2>${m.title}</h2><p>${m.desc}</p></div><span class="count">${n} 项</span></div>`;
+    $('#fieldsRoot').innerHTML=m.groups.map(g=>`<div class="group-title">${g[0]}</div><div class="fields">${g[1].map(fieldHTML).join('')}</div>`).join('');
+    $$('.field').forEach(el=>{
+      const id=el.dataset.id, f=allFields().find(x=>x.id===id);
+      const enable=el.querySelector('.enable');
+      enable.onchange=()=>{state.enabled[id]=enable.checked;el.classList.toggle('disabled',!enable.checked);generate();};
+      const sel=el.querySelector('.field-select');
+      if(sel)sel.onchange=()=>{state.values[id]=sel.value;if(sel.value){state.enabled[id]=true;enable.checked=true;el.classList.remove('disabled');}generate();};
+      el.querySelectorAll('[data-option]').forEach(c=>c.onchange=()=>{state.values[id]=[...el.querySelectorAll('[data-option]:checked')].map(x=>x.dataset.option);if(state.values[id].length){state.enabled[id]=true;enable.checked=true;el.classList.remove('disabled');}generate();});
+      const custom=el.querySelector('.custom');
+      custom.oninput=()=>{state.custom[id]=custom.value.trim();if(custom.value.trim()){state.enabled[id]=true;enable.checked=true;el.classList.remove('disabled');}generate();};
+    });
+  }
+  function picked(id){
+    if(!state.enabled[id])return '';
+    const v=state.values[id], c=state.custom[id]?.trim();
+    const parts=[];if(Array.isArray(v))parts.push(...v);else if(v)parts.push(v);if(c)parts.push(c);
+    return [...new Set(parts)].join('、');
+  }
+  function phrase(id,prefix='',suffix=''){const v=picked(id);return v?`${prefix}${v}${suffix}`:'';}
+  function join(items,sep='，'){return items.filter(Boolean).join(sep);}
+  function basics(){const o={};$$('.basic-input').forEach(e=>o[e.dataset.key]=e.value.trim());return o;}
+  function generate(){
+    const b=basics(), parts=[];
+    const identity=join([
+      b.name?`角色名为“${b.name}”`:'一位原创东方角色',
+      b.gender?`呈${b.gender}形象`:'', b.age?`年龄感为${b.age}`:'', b.roleType?`身份是${b.roleType}`:'', b.temperament?`第一印象${b.temperament}`:''
+    ]);
+    parts.push(`${identity}。`);
+    const faceShape=join([phrase('faceShape'),phrase('faceRatio','面部比例'),phrase('forehead','额头'),phrase('hairline','发际线为')]);
+    const bone=join([phrase('jawline','下颌线'),phrase('jawWidth','下颌'),phrase('chin','下巴'),phrase('cheekboneHeight','颧骨位置'),phrase('cheekboneForm','颧骨轮廓'),phrase('cheeks','脸颊')]);
+    const brow=join([phrase('browShape'),phrase('browThickness','眉形'),phrase('browDensity'),phrase('browEyeDistance','眉眼距离')]);
+    const eyes=join([phrase('eyeShape'),phrase('eyeSize','眼睛'),phrase('eyeLength'),phrase('eyeTail','眼尾'),phrase('eyeInner','眼头'),phrase('eyelid'),phrase('aegyo','卧蚕'),phrase('eyeDistance'),phrase('lashes','睫毛')]);
+    const iris=join([phrase('irisColor','虹膜呈'),phrase('irisSize','虹膜'),phrase('gaze','眼神')]);
+    const nose=join([phrase('noseRoot','山根'),phrase('noseBridge'),phrase('noseWidth','鼻部'),phrase('noseTip','鼻尖'),phrase('noseWing','鼻翼'),phrase('nostril','鼻孔')]);
+    const lips=join([phrase('mouthSize','嘴巴'),phrase('lipThickness'),phrase('lipShape'),phrase('cupidBow'),phrase('lipRatio'),phrase('mouthCorner','嘴角'),phrase('lipColor','唇色')]);
+    const skin=join([phrase('skinTone','肤色'),phrase('skinTexture','皮肤'),phrase('marks','辨识标记为'),phrase('ageFeeling','呈现'),phrase('overallAura','整体面相')]);
+    const faceAll=[faceShape&&`面部是${faceShape}`,bone&&`骨相表现为${bone}`,brow&&`眉部采用${brow}`,eyes&&`眼部为${eyes}`,iris,nose&&`鼻部线条为${nose}`,lips&&`唇部为${lips}`,skin].filter(Boolean);
+    if(faceAll.length)parts.push(`面部细节：${faceAll.join('；')}。`);
+
+    const hairBase=join([phrase('hairLength'),phrase('hairColor'),phrase('hairTexture'),phrase('bangs')]);
+    const hairStruct=join([phrase('tieStyle'),phrase('bun'),phrase('braid','搭配'),phrase('templeHair')]);
+    const hairMotion=join([phrase('looseHair'),phrase('strandState'),phrase('wind','呈'),phrase('hairOrnaments','点缀')]);
+    if(hairBase||hairStruct||hairMotion)parts.push(`发型设计：${join([hairBase&&`头发${hairBase}`,hairStruct&&`整体${hairStruct}`,hairMotion], '；')}。`);
+
+    const clothStruct=join([phrase('clothingStyle'),phrase('innerLayer','内搭'),phrase('outerRobe'),phrase('top','上身着'),phrase('bottom','下身配')]);
+    const cut=join([phrase('sleeves'),phrase('collar'),phrase('waist'),phrase('layers','形成')]);
+    const material=join([phrase('fabric','使用'),phrase('clothingColors','主色为'),phrase('patterns','饰以')]);
+    const wear=join([phrase('aging'),phrase('damage')]);
+    const full=join([phrase('boots','脚穿'),phrase('cape'),phrase('silhouette','整体廓形')]);
+    if(clothStruct||cut||material||wear||full)parts.push(`服装造型：以${clothStruct||'东方幻想服饰'}为主体；${join([cut,material,wear&&`保留${wear}`,full],'；')}。`);
+
+    const accHead=join([phrase('headpiece'),phrase('pin'),phrase('earrings'),phrase('mask'),phrase('hat')]);
+    const accBody=join([phrase('necklace'),phrase('bracers'),phrase('waistAccessories'),phrase('jade'),phrase('sachet')]);
+    const accCarry=join([phrase('bag'),phrase('signatureAccessory','最醒目的标志是')]);
+    if(accHead||accBody||accCarry)parts.push(`配饰安排：${join([accHead,accBody,accCarry],'；')}，位置清楚、数量克制且符合角色身份。`);
+
+    const wc=picked('weaponClass');
+    if(wc==='无武器') parts.push('武器设定：角色不携带任何武器。');
+    else{
+      const weaponMain=join([wc,phrase('weaponType'),phrase('weaponSize')]);
+      const weaponMat=join([phrase('weaponMaterial','以'),phrase('weaponColor','整体呈'),phrase('weaponPattern','表面带有')]);
+      const weaponParts=join([phrase('guard'),phrase('grip'),phrase('sheath')]);
+      const weaponUse=join([phrase('carryPosition'),phrase('weaponWear'),phrase('effects')]);
+      if(weaponMain||weaponMat||weaponParts||weaponUse)parts.push(`武器设定：携带${weaponMain||'东方兵器'}；${join([weaponMat,weaponParts,weaponUse],'；')}，武器结构完整、比例合理。`);
+    }
+    const textureBits=[picked('skinTexture'),picked('fabric'),picked('aging'),picked('damage'),picked('weaponMaterial'),picked('weaponWear')].filter(Boolean);
+    if(textureBits.length)parts.push(`材质细节强调真实可触的层次：${[...new Set(textureBits)].join('、')}，光影能区分皮肤、布料、金属、玉石与木材，不做塑料化处理。`);
+    if($('#consistencyToggle').checked&&$('#consistencyText').value.trim())parts.push(`一致性强约束：${$('#consistencyText').value.trim()}`);
+    if($('#negativeToggle').checked&&$('#negativeText').value.trim())parts.push(`负面约束：${$('#negativeText').value.trim()}`);
+    const text=parts.join('\n\n');$('#promptOutput').value=text;$('#charCount').textContent=`${text.length} 字`;
+  }
+  function serialize(){return {version:1,savedAt:new Date().toISOString(),basic:basics(),state:{values:state.values,enabled:state.enabled,custom:state.custom},consistency:{enabled:$('#consistencyToggle').checked,text:$('#consistencyText').value},negative:{enabled:$('#negativeToggle').checked,text:$('#negativeText').value}};}
+  function applyConfig(data){
+    if(!data||typeof data!=='object'||!data.state)throw new Error('配置格式不正确');
+    $$('.basic-input').forEach(e=>{if(data.basic&&Object.hasOwn(data.basic,e.dataset.key))e.value=data.basic[e.dataset.key]??'';});
+    const validIds=new Set(allFields().map(f=>f.id));
+    for(const id of validIds){if(Object.hasOwn(data.state.values||{},id))state.values[id]=data.state.values[id];if(Object.hasOwn(data.state.enabled||{},id))state.enabled[id]=!!data.state.enabled[id];if(Object.hasOwn(data.state.custom||{},id))state.custom[id]=String(data.state.custom[id]??'');}
+    if(data.consistency){$('#consistencyToggle').checked=data.consistency.enabled!==false;$('#consistencyText').value=data.consistency.text||'';}
+    if(data.negative){$('#negativeToggle').checked=data.negative.enabled!==false;$('#negativeText').value=data.negative.text||'';}
+    renderModule();generate();
+  }
+  function toast(msg){const t=$('#toast');t.textContent=msg;t.classList.add('show');clearTimeout(toast.timer);toast.timer=setTimeout(()=>t.classList.remove('show'),1900);}
+  async function copyPrompt(){
+    const text=$('#promptOutput').value;try{await navigator.clipboard.writeText(text);}catch(e){$('#promptOutput').select();document.execCommand('copy');window.getSelection()?.removeAllRanges();}toast('完整提示词已复制');
+  }
+  function randomize(){
+    allFields().forEach(f=>{const chance=f.module==='face'?.88:f.module==='hair'?.78:f.module==='clothing'?.76:f.module==='weapon'?.58:.42;state.enabled[f.id]=Math.random()<chance;state.custom[f.id]='';if(f.type==='multi'){const shuffled=[...f.options].sort(()=>Math.random()-.5);state.values[f.id]=state.enabled[f.id]?shuffled.slice(0,Math.random()<.7?1:2):[];}else state.values[f.id]=f.options[Math.floor(Math.random()*f.options.length)];});
+    const names=['沈照月','谢临川','云无咎','顾长霄','闻人雪','燕归尘','陆青梧','白砚秋'];const roles=['清冷剑修','江湖游侠','隐世医者','妖族祭司','魔教少主','仙门弟子','山野灵修','游侠刺客'];const vibes=['清冷疏离','温润克制','英气飒爽','明艳凌厉','沉静悲悯','慵懒不羁'];
+    $('#characterName').value=names[Math.floor(Math.random()*names.length)];$('#gender').value=['女性','男性','中性'][Math.floor(Math.random()*3)];$('#age').value=['少年感（13—17岁）','青年（18—28岁）','成熟青年（29—39岁）'][Math.floor(Math.random()*3)];$('#roleType').value=roles[Math.floor(Math.random()*roles.length)];$('#temperament').value=vibes[Math.floor(Math.random()*vibes.length)];
+    renderModule();generate();toast('已随机生成一位角色');
+  }
+  function clearAll(){
+    $$('.basic-input').forEach(e=>e.value='');initializeState();allFields().forEach(f=>{state.enabled[f.id]=false;state.values[f.id]=f.type==='multi'?[]:'';});$('#consistencyToggle').checked=true;$('#negativeToggle').checked=true;renderModule();generate();toast('已清空全部选择');
+  }
+  initializeState();renderTabs();renderModule();
+  $$('.basic-input').forEach(e=>e.addEventListener('input',generate));
+  ['consistencyToggle','consistencyText','negativeToggle','negativeText'].forEach(id=>$('#'+id).addEventListener('input',generate));
+  $('#promptOutput').addEventListener('input',()=>$('#charCount').textContent=`${$('#promptOutput').value.length} 字`);
+  $('#copyBtn').onclick=copyPrompt;$('#refreshBtn').onclick=generate;$('#randomBtn').onclick=randomize;$('#clearBtn').onclick=()=>{if(confirm('确定清空所有角色选择吗？'))clearAll();};
+  $('#saveBtn').onclick=()=>{localStorage.setItem('orientalCharacterPromptConfig',JSON.stringify(serialize()));toast('当前配置已保存在本浏览器');};
+  $('#loadBtn').onclick=()=>{const raw=localStorage.getItem('orientalCharacterPromptConfig');if(!raw)return toast('还没有已保存的配置');try{applyConfig(JSON.parse(raw));toast('已读取保存的配置');}catch(e){toast('读取失败：'+e.message);}};
+  $('#exportBtn').onclick=()=>{const blob=new Blob([JSON.stringify(serialize(),null,2)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=($('#characterName').value.trim()||'东方角色')+'_角色配置.json';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),800);toast('配置 JSON 已导出');};
+  $('#importBtn').onclick=()=>$('#fileInput').click();
+  $('#fileInput').onchange=async e=>{const file=e.target.files[0];if(!file)return;try{applyConfig(JSON.parse(await file.text()));toast('配置导入成功');}catch(err){toast('导入失败：'+err.message);}e.target.value='';};
+  document.addEventListener('keydown',e=>{if((e.ctrlKey||e.metaKey)&&e.key==='Enter'){e.preventDefault();copyPrompt();}});
+  generate();
+  window.CharacterPromptApp={serialize,applyConfig,generate,randomize,clearAll,state,modules};
+})();
+</script>
+</body>
+</html>
